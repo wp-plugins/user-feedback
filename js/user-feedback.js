@@ -152,9 +152,7 @@ __p+='<div id="user-feedback-overlay"></div>\n<div class="user-feedback-modal us
 ((__t=( button.closeAria ))==null?'':__t)+
 '"\n\t\t\t\ttabindex="2">\n\t\t\t'+
 ((__t=( button.close ))==null?'':__t)+
-'\n\t\t</button>\n\t</div>\n\t<div id="user-feedback-overview-description">\n\t\t<div id="user-feedback-overview-user">\n\t\t\t<img src="" width="40" height="40" alt="'+
-((__t=( user.gravatarAlt ))==null?'':__t)+
-'" />\n\n\t\t\t<div>'+
+'\n\t\t</button>\n\t</div>\n\t<div id="user-feedback-overview-description">\n\t\t<div id="user-feedback-overview-user">\n\t\t\t<div>'+
 ((__t=( user.by ))==null?'':__t)+
 '</div>\n\t\t</div>\n\t\t<textarea\n\t\t\t\tid="user-feedback-overview-note"\n\t\t\t\tclass="user-feedback-textarea"\n\t\t\t\ttabindex="1"\n\t\t\t\tplaceholder="'+
 ((__t=( placeholder.message ))==null?'':__t)+
@@ -222,7 +220,7 @@ jQuery(document).ready(function ($) {
  */
 var saysWho = function () {
 	var ua = navigator.userAgent, tem,
-			M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+		M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
 	if (/trident/i.test(M[1])) {
 		tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
 		return 'Internet Explorer ' + (tem[1] || '');
@@ -343,39 +341,39 @@ var AppView = Backbone.View.extend({
 
 		// Set up initial post data to be sent
 		var post = {
-			browser    : {
-				name         : navigator.saysWho,
+			browser: {
+				name: navigator.saysWho,
 				cookieEnabled: navigator.cookieEnabled,
-				platform     : navigator.platform,
-				userAgent    : navigator.userAgent,
-				languages    : window.navigator.languages || [window.navigator.language || window.navigator.userLanguage],
+				platform: navigator.platform,
+				userAgent: navigator.userAgent,
+				languages: window.navigator.languages || [window.navigator.language || window.navigator.userLanguage],
 			},
-			url        : document.URL,
-			theme      : user_feedback.theme,
-			language   : user_feedback.language,
+			url: document.URL,
+			theme: user_feedback.theme,
+			language: user_feedback.language,
 			third_party: user_feedback.third_party,
-			message    : this.model.get('userMessage'),
-			img        : this.model.get('userScreenshot'),
-			user       : {
-				name : this.model.get('userName'),
+			message: this.model.get('userMessage'),
+			img: this.model.get('userScreenshot'),
+			user: {
+				name: this.model.get('userName'),
 				email: this.model.get('userEmail')
 			}
 		};
 
 		jQuery.post(
-				user_feedback.ajax_url,
-				{
-					'action': 'user_feedback',
-					'data'  : post
-				}
+			user_feedback.ajax_url,
+			{
+				'action': 'user_feedback_submit',
+				'data': post
+			}
 		)
-				.done(function () {
-					// todo: success view
-					// this.model.set(...);
-				})
-				.fail(function () {
-					// todo: failure view
-				});
+			.done(function () {
+					  // todo: success view
+					  // this.model.set(...);
+				  })
+			.fail(function () {
+					  // todo: failure view
+				  });
 	}
 });
 
@@ -387,246 +385,248 @@ module.exports = AppView;
 var template = require(3);
 
 var UserFeedbackBar = Backbone.View.extend({
-  tagName  : 'div',
-  className: 'user-feedback-bottombar-view',
-  template : template(user_feedback.templates.bottombar),
+	tagName: 'div',
+	className: 'user-feedback-bottombar-view',
+	template: template(user_feedback.templates.bottombar),
 
-  initialize: function () {
-    this.model.on("change:currentWizardStep", this.changeStep, this);
-  },
+	initialize: function () {
+		this.model.on("change:currentWizardStep", this.changeStep, this);
+	},
 
-  render: function () {
-    this.$el.html(this.template);
-    this.changeStep();
-    return this;
-  },
+	render: function () {
+		this.$el.html(this.template);
+		this.changeStep();
+		return this;
+	},
 
-  events: {
-    'click .user-feedback-button-help': 'toggleWizard'
-  },
+	events: {
+		'click .user-feedback-button-help': 'toggleWizard'
+	},
 
-  toggleWizard: function () {
-    this.trigger('toggleWizard');
-  },
+	toggleWizard: function () {
+		this.trigger('toggleWizard');
+	},
 
-  changeStep: function () {
-    _.each(this.$el.find('.user-feedback-bar-step'), function (el) {
-      if (jQuery(el).attr('data-step') <= this.model.get('currentWizardStep')) {
-        jQuery(el).removeClass('hidden');
-      } else {
-        jQuery(el).addClass('hidden');
-      }
-    }, this);
-  }
+	changeStep: function () {
+		_.each(this.$el.find('.user-feedback-bar-step'), function (el) {
+			if (jQuery(el).attr('data-step') <= this.model.get('currentWizardStep')) {
+				jQuery(el).removeClass('hidden');
+			} else {
+				jQuery(el).addClass('hidden');
+			}
+		}, this);
+	}
 });
 
 module.exports = UserFeedbackBar;
+
 },{"3":3}],14:[function(require,module,exports){
 'use strict';
 
 var template = require(4);
 
 var UserFeedbackButton = Backbone.View.extend({
-  tagName  : 'div',
-  className: 'user-feedback-button-view',
-  template : template(user_feedback.templates.button),
+	tagName: 'div',
+	className: 'user-feedback-button-view',
+	template: template(user_feedback.templates.button),
 
-  render: function () {
-    this.$el.html(this.template);
-    this.delegateEvents();
+	render: function () {
+		this.$el.html(this.template);
+		this.delegateEvents();
 
-    return this;
-  },
+		return this;
+	},
 
-  events: {
-    'click #user-feedback-init-button': 'toggleInitButton',
-  },
+	events: {
+		'click #user-feedback-init-button': 'toggleInitButton',
+	},
 
-  toggleInitButton: function () {
-    this.trigger('toggleInitButton');
-    return this;
-  }
+	toggleInitButton: function () {
+		this.trigger('toggleInitButton');
+		return this;
+	}
 });
 
 module.exports = UserFeedbackButton;
+
 },{"4":4}],15:[function(require,module,exports){
 'use strict';
 
 var template = require(2);
 
 var CanvasView = Backbone.View.extend({
-  className: 'user-feedback-wizard-step-3-canvas',
-  template : _.template('<canvas id="user-feedback-canvas"></canvas><div id="user-feedback-annotations"></div>'),
+	className: 'user-feedback-wizard-step-3-canvas',
+	template: _.template('<canvas id="user-feedback-canvas"></canvas><div id="user-feedback-annotations"></div>'),
 
-  initialize: function () {
-    this.highlighted = [];
-    this.annotationCount = 0;
-  },
+	initialize: function () {
+		this.highlighted = [];
+		this.annotationCount = 0;
+	},
 
-  events: {
-    'mouseup #user-feedback-canvas'        : 'mouseUp',
-    'mousedown #user-feedback-canvas'      : 'mouseDown',
-    'mousemove'                            : 'mouseMove',
-    'click .user-feedback-annotation-close': 'removeAnnotation',
-    'mouseleave #user-feedback-canvas'     : 'redraw'
-  },
+	events: {
+		'mouseup #user-feedback-canvas': 'mouseUp',
+		'mousedown #user-feedback-canvas': 'mouseDown',
+		'mousemove': 'mouseMove',
+		'click .user-feedback-annotation-close': 'removeAnnotation',
+		'mouseleave #user-feedback-canvas': 'redraw'
+	},
 
-  render: function () {
-    this.$el.html(this.template());
-    this.delegateEvents();
+	render: function () {
+		this.$el.html(this.template());
+		this.delegateEvents();
 
-    this.canvas = this.$el.find('#user-feedback-canvas')[0];
-    this.rect = {};
+		this.canvas = this.$el.find('#user-feedback-canvas')[0];
+		this.rect = {};
 
-    // @see http://stackoverflow.com/questions/18462303/incorrect-mouse-coordinates-when-drawing-on-canvas
-    this.canvas.width = jQuery(document).width();
-    this.canvas.height = jQuery(document).height();
-    jQuery(this.canvas).width(jQuery(document).width()).height(jQuery(document).height());
-    this.ctx = this.canvas.getContext('2d');
-    this.redraw();
+		// @see http://stackoverflow.com/questions/18462303/incorrect-mouse-coordinates-when-drawing-on-canvas
+		this.canvas.width = jQuery(document).width();
+		this.canvas.height = jQuery(document).height();
+		jQuery(this.canvas).width(jQuery(document).width()).height(jQuery(document).height());
+		this.ctx = this.canvas.getContext('2d');
+		this.redraw();
 
-    return this;
-  },
+		return this;
+	},
 
-  mouseUp: function () {
-    this.drag = false;
+	mouseUp: function () {
+		this.drag = false;
 
-    var dtop = this.rect.startY,
-        dleft = this.rect.startX,
-        dwidth = this.rect.w,
-        dheight = this.rect.h;
+		var dtop = this.rect.startY,
+			dleft = this.rect.startX,
+			dwidth = this.rect.w,
+			dheight = this.rect.h;
 
-    if (dwidth === 0 || dheight === 0) {
+		if (dwidth === 0 || dheight === 0) {
 			return;
 		}
 
-    if (dwidth < 0) {
-      dleft += dwidth;
-      dwidth *= -1;
-    }
-    if (dheight < 0) {
-      dtop += dheight;
-      dheight *= -1;
-    }
+		if (dwidth < 0) {
+			dleft += dwidth;
+			dwidth *= -1;
+		}
+		if (dheight < 0) {
+			dtop += dheight;
+			dheight *= -1;
+		}
 
-    if (dtop + dheight > jQuery(document).height()) {
+		if (dtop + dheight > jQuery(document).height()) {
 			dheight = jQuery(document).height() - dtop;
 		}
-    if (dleft + dwidth > jQuery(document).width()) {
+		if (dleft + dwidth > jQuery(document).width()) {
 			dwidth = jQuery(document).width() - dleft;
 		}
 
-    jQuery('#user-feedback-annotations').append(template({
-      id       : this.annotationCount,
-      top      : dtop,
-      left     : dleft,
-      width    : dwidth,
-      height   : dheight,
-      close    : user_feedback.templates.wizardStep3Annotation.close,
-      closeAria: user_feedback.templates.wizardStep3Annotation.closeAria
-    }));
-    this.annotationCount++;
+		jQuery('#user-feedback-annotations').append(template({
+			id: this.annotationCount,
+			top: dtop,
+			left: dleft,
+			width: dwidth,
+			height: dheight,
+			close: user_feedback.templates.wizardStep3Annotation.close,
+			closeAria: user_feedback.templates.wizardStep3Annotation.closeAria
+		}));
+		this.annotationCount++;
 
-    this.redraw();
-    this.rect.w = 0;
-  },
+		this.redraw();
+		this.rect.w = 0;
+	},
 
-  mouseDown: function (e) {
-    this.rect.startX = e.pageX - jQuery(e.target).offset().left;
-    this.rect.startY = e.pageY - jQuery(e.target).offset().top;
-    this.rect.w = 0;
-    this.rect.h = 0;
-    this.drag = true;
-  },
+	mouseDown: function (e) {
+		this.rect.startX = e.pageX - jQuery(e.target).offset().left;
+		this.rect.startY = e.pageY - jQuery(e.target).offset().top;
+		this.rect.w = 0;
+		this.rect.h = 0;
+		this.drag = true;
+	},
 
-  mouseMove: function (e) {
-    this.redraw();
-    var tmpHighlighted = [];
+	mouseMove: function (e) {
+		this.redraw();
+		var tmpHighlighted = [];
 
-    var $toHighlight = tmpHighlighted[tmpHighlighted.length - 1];
+		var $toHighlight = tmpHighlighted[tmpHighlighted.length - 1];
 
-    if ($toHighlight && !this.drag) {
-      var _x = $toHighlight.offset().left - 2,
-          _y = $toHighlight.offset().top - 2,
-          _w = $toHighlight.width() + parseInt($toHighlight.css('padding-left'), 10) + parseInt($toHighlight.css('padding-right'), 10) + 6,
-          _h = $toHighlight.height() + parseInt($toHighlight.css('padding-top'), 10) + parseInt($toHighlight.css('padding-bottom'), 10) + 6;
+		if ($toHighlight && !this.drag) {
+			var _x = $toHighlight.offset().left - 2,
+				_y = $toHighlight.offset().top - 2,
+				_w = $toHighlight.width() + parseInt($toHighlight.css('padding-left'), 10) + parseInt($toHighlight.css('padding-right'), 10) + 6,
+				_h = $toHighlight.height() + parseInt($toHighlight.css('padding-top'), 10) + parseInt($toHighlight.css('padding-bottom'), 10) + 6;
 
-      this.drawlines(_x, _y, _w, _h, true);
-      this.clearRect(_x, _y, _w, _h);
+			this.drawlines(_x, _y, _w, _h, true);
+			this.clearRect(_x, _y, _w, _h);
 
-      _.each(jQuery('.user-feedback-annotation'), function (el) {
-        this.clearRect(parseInt(jQuery(el).css('left'), 10), parseInt(jQuery(el).css('top'), 10), jQuery(el).width(), jQuery(el).height());
-      }, this);
-    }
+			_.each(jQuery('.user-feedback-annotation'), function (el) {
+				this.clearRect(parseInt(jQuery(el).css('left'), 10), parseInt(jQuery(el).css('top'), 10), jQuery(el).width(), jQuery(el).height());
+			}, this);
+		}
 
-    if (this.drag && e.type === 'mousemove') {
-      this.rect.w = (e.pageX - jQuery('#user-feedback-canvas').offset().left) - this.rect.startX;
-      this.rect.h = (e.pageY - jQuery('#user-feedback-canvas').offset().top) - this.rect.startY;
+		if (this.drag && e.type === 'mousemove') {
+			this.rect.w = (e.pageX - jQuery('#user-feedback-canvas').offset().left) - this.rect.startX;
+			this.rect.h = (e.pageY - jQuery('#user-feedback-canvas').offset().top) - this.rect.startY;
 
-      this.clearRect(0, 0, jQuery('#user-feedback-canvas').width(), jQuery('#user-feedback-canvas').height());
-      this.ctx.fillStyle = 'rgba(102,102,102,0.5)';
-      this.ctx.fillRect(0, 0, jQuery('#user-feedback-canvas').width(), jQuery('#user-feedback-canvas').height());
+			this.clearRect(0, 0, jQuery('#user-feedback-canvas').width(), jQuery('#user-feedback-canvas').height());
+			this.ctx.fillStyle = 'rgba(102,102,102,0.5)';
+			this.ctx.fillRect(0, 0, jQuery('#user-feedback-canvas').width(), jQuery('#user-feedback-canvas').height());
 
-      _.each(jQuery('.user-feedback-annotation'), function (el) {
-        el = jQuery(el);
-        this.drawlines(parseInt(el.css('left'), 10), parseInt(el.css('top'), 10), el.width(), el.height(), true);
-      }, this);
+			_.each(jQuery('.user-feedback-annotation'), function (el) {
+				el = jQuery(el);
+				this.drawlines(parseInt(el.css('left'), 10), parseInt(el.css('top'), 10), el.width(), el.height(), true);
+			}, this);
 
-      this.drawlines(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
-      this.clearRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
+			this.drawlines(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
+			this.clearRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
 
-      _.each(jQuery('.user-feedback-annotation'), function (el) {
-        el = jQuery(el);
-        this.clearRect(parseInt(el.css('left'), 10), parseInt(el.css('top'), 10), el.width(), el.height());
-      }, this);
-    }
-  },
+			_.each(jQuery('.user-feedback-annotation'), function (el) {
+				el = jQuery(el);
+				this.clearRect(parseInt(el.css('left'), 10), parseInt(el.css('top'), 10), el.width(), el.height());
+			}, this);
+		}
+	},
 
-  removeAnnotation: function (e) {
-    jQuery(e.currentTarget).parent().remove();
-    this.redraw();
-  },
+	removeAnnotation: function (e) {
+		jQuery(e.currentTarget).parent().remove();
+		this.redraw();
+	},
 
-  drawlines: function (x, y, w, h, border) {
-    // set our styles for the rectangle
-    this.ctx.strokeStyle = "black";
-    this.ctx.shadowColor = "black";
-    this.ctx.shadowOffsetX = 1;
-    this.ctx.shadowOffsetY = 1;
-    this.ctx.shadowBlur = 10;
-    this.ctx.lineJoin = "bevel";
-    this.ctx.lineWidth = 3;
+	drawlines: function (x, y, w, h, border) {
+		// set our styles for the rectangle
+		this.ctx.strokeStyle = "black";
+		this.ctx.shadowColor = "black";
+		this.ctx.shadowOffsetX = 1;
+		this.ctx.shadowOffsetY = 1;
+		this.ctx.shadowBlur = 10;
+		this.ctx.lineJoin = "bevel";
+		this.ctx.lineWidth = 3;
 
-    if (!!border) {
-      this.ctx.shadowColor = "transparent";
-      this.ctx.strokeStyle = "transparent";
-    }
+		if (!!border) {
+			this.ctx.shadowColor = "transparent";
+			this.ctx.strokeStyle = "transparent";
+		}
 
-    this.ctx.strokeRect(x, y, w, h);
+		this.ctx.strokeRect(x, y, w, h);
 
-    // reset styles again
-    this.ctx.shadowOffsetX = 0;
-    this.ctx.shadowOffsetY = 0;
-    this.ctx.shadowBlur = 0;
-    this.ctx.lineWidth = 1;
-  },
+		// reset styles again
+		this.ctx.shadowOffsetX = 0;
+		this.ctx.shadowOffsetY = 0;
+		this.ctx.shadowBlur = 0;
+		this.ctx.lineWidth = 1;
+	},
 
-  clearRect: function (x, y, w, h) {
-    this.ctx.shadowColor = "transparent";
-    this.ctx.strokeStyle = "transparent";
-    this.ctx.clearRect(x, y, w, h);
-  },
+	clearRect: function (x, y, w, h) {
+		this.ctx.shadowColor = "transparent";
+		this.ctx.strokeStyle = "transparent";
+		this.ctx.clearRect(x, y, w, h);
+	},
 
-  redraw: function () {
-    this.clearRect(0, 0, jQuery(this.canvas).width(), jQuery(this.canvas).height());
-    this.ctx.fillStyle = 'rgba(102,102,102,0.5)';
-    this.ctx.fillRect(0, 0, jQuery(this.canvas).width(), jQuery(this.canvas).height());
+	redraw: function () {
+		this.clearRect(0, 0, jQuery(this.canvas).width(), jQuery(this.canvas).height());
+		this.ctx.fillStyle = 'rgba(102,102,102,0.5)';
+		this.ctx.fillRect(0, 0, jQuery(this.canvas).width(), jQuery(this.canvas).height());
 
-    _.each(jQuery('.user-feedback-annotation'), function (el) {
-      this.drawlines(parseInt(jQuery(el).css('left'), 10), parseInt(jQuery(el).css('top'), 10), jQuery(el).width(), jQuery(el).height(), true);
-      this.clearRect(parseInt(jQuery(el).css('left'), 10), parseInt(jQuery(el).css('top'), 10), jQuery(el).width(), jQuery(el).height());
-    }, this);
-  }
+		_.each(jQuery('.user-feedback-annotation'), function (el) {
+			this.drawlines(parseInt(jQuery(el).css('left'), 10), parseInt(jQuery(el).css('top'), 10), jQuery(el).width(), jQuery(el).height(), true);
+			this.clearRect(parseInt(jQuery(el).css('left'), 10), parseInt(jQuery(el).css('top'), 10), jQuery(el).width(), jQuery(el).height());
+		}, this);
+	}
 });
 
 module.exports = CanvasView;
@@ -638,17 +638,18 @@ var WizardStep = require(21);
 var template = require(5);
 
 var WizardStep1 = WizardStep.extend({
-  className: 'user-feedback-wizard-step-1',
-  template : template(user_feedback.templates.wizardStep1),
+	className: 'user-feedback-wizard-step-1',
+	template: template(user_feedback.templates.wizardStep1),
 
-  nextStep: function () {
-    this.model.set('userName', jQuery(document.getElementById('user-feedback-user-name')).val());
-    this.model.set('userEmail', jQuery(document.getElementById('user-feedback-user-email')).val());
-  }
+	nextStep: function () {
+		this.model.set('userName', jQuery(document.getElementById('user-feedback-user-name')).val());
+		this.model.set('userEmail', jQuery(document.getElementById('user-feedback-user-email')).val());
+	}
 
 });
 
 module.exports = WizardStep1;
+
 },{"21":21,"5":5}],17:[function(require,module,exports){
 'use strict';
 
@@ -656,22 +657,22 @@ var WizardStep = require(21);
 var template = require(6);
 
 var WizardStep2 = WizardStep.extend({
-  className: 'user-feedback-wizard-step-2',
-  template : template(user_feedback.templates.wizardStep2),
+	className: 'user-feedback-wizard-step-2',
+	template: template(user_feedback.templates.wizardStep2),
 
-  render: function () {
-    this.$el.html(this.template);
-    this.delegateEvents();
+	render: function () {
+		this.$el.html(this.template);
+		this.delegateEvents();
 
-    var name = ( this.model.get('userName') !== '' ) ? this.model.get('userName') : user_feedback.user.name;
-    this.$el.find('p:first-of-type').append(name);
+		var name = ( this.model.get('userName') !== '' ) ? this.model.get('userName') : user_feedback.user.name;
+		this.$el.find('p:first-of-type').append(name);
 
-    return this;
-  },
+		return this;
+	},
 
-  nextStep: function () {
-    this.model.set('doNotShowInfoAgain', jQuery(document.getElementById('user-feedback-do-not-show-again')).is(":checked"));
-  }
+	nextStep: function () {
+		this.model.set('doNotShowInfoAgain', jQuery(document.getElementById('user-feedback-do-not-show-again')).is(":checked"));
+	}
 });
 
 module.exports = WizardStep2;
@@ -683,127 +684,136 @@ var WizardStep = require(21);
 var CanvasView = require(15);
 var userFeedbackModel = require(1);
 var template = require(7);
-window.html2canvas = require(35); // Apparently needs to be globally accessible
+window.html2canvas = require(28); // Apparently needs to be globally accessible
 
 var WizardStep3 = WizardStep.extend({
-  className: 'user-feedback-wizard-step-3',
-  template : template(user_feedback.templates.wizardStep3),
+	className: 'user-feedback-wizard-step-3',
+	template: template(user_feedback.templates.wizardStep3),
 
-  events: {
-    'click .user-feedback-button-screen-capture': 'screenCapture'
-  },
+	events: {
+		'click .user-feedback-button-screen-capture': 'screenCapture'
+	},
 
-  initialize: function () {
-    this.canvasView = new CanvasView({model: userFeedbackModel});
-  },
+	initialize: function () {
+		this.canvasView = new CanvasView({model: userFeedbackModel});
+	},
 
-  render: function () {
-    this.$el.html(this.template).append(this.canvasView.render().el);
-    this.delegateEvents();
+	render: function () {
+		this.$el.html(this.template).append(this.canvasView.render().el);
+		this.delegateEvents();
 
-    return this;
-  },
+		return this;
+	},
 
-  screenCapture: function (e) {
-    var that = this;
+	screenCapture: function (e) {
+		var that = this;
 
-    // Hide UI before taking the screenshot
-    jQuery('#user-feedback-bottombar').hide();
-    jQuery('.user-feedback-modal').hide();
+		// Hide UI before taking the screenshot
+		jQuery('#user-feedback-bottombar').hide();
+		jQuery('.user-feedback-modal').hide();
 
-    html2canvas(document.body).then(function(canvas) {
-      that.canvasView.redraw();
-      var _canvas = jQuery('<canvas id="user-feedback-canvas-tmp" width="' + jQuery(document).width() + '" height="' + jQuery(window).height() + '"/>').hide().appendTo('body');
-      var _ctx = _canvas.get(0).getContext('2d');
-      _ctx.drawImage(canvas, 0, jQuery(document).scrollTop(), jQuery(document).width(), jQuery(window).height(), 0, 0, jQuery(document).width(), jQuery(window).height());
+		html2canvas(document.body).then(function (canvas) {
+			that.canvasView.redraw();
+			var _canvas = jQuery('<canvas id="user-feedback-canvas-tmp" width="' + jQuery(document).width() + '" height="' + jQuery(window).height() + '"/>').hide().appendTo('body');
+			var _ctx = _canvas.get(0).getContext('2d');
+			_ctx.drawImage(canvas, 0, jQuery(document).scrollTop(), jQuery(document).width(), jQuery(window).height(), 0, 0, jQuery(document).width(), jQuery(window).height());
 
-      that.model.set('userScreenshot', _canvas.get(0).toDataURL());
-      jQuery('#user-feedback-canvas-tmp').remove();
+			that.model.set('userScreenshot', _canvas.get(0).toDataURL());
+			jQuery('#user-feedback-canvas-tmp').remove();
 
-      // Show UI again
-      jQuery('#user-feedback-bottombar').show();
-      jQuery('.user-feedback-modal').show();
+			// Show UI again
+			jQuery('#user-feedback-bottombar').show();
+			jQuery('.user-feedback-modal').show();
 
-      that.trigger('nextStep');
-    }, function(error) {
-      // Handle error
-    });
-  }
+			that.trigger('nextStep');
+		}, function (error) {
+			// Handle error
+		});
+	}
 });
 
 module.exports = WizardStep3;
-},{"1":1,"15":15,"21":21,"35":35,"7":7}],19:[function(require,module,exports){
+
+},{"1":1,"15":15,"21":21,"28":28,"7":7}],19:[function(require,module,exports){
 'use strict';
 
 var WizardStep = require(21);
 var template = require(8);
-var md5 = require(23);
 
 var WizardStep4 = WizardStep.extend({
-  className: 'user-feedback-wizard-step-4',
-  template : template(user_feedback.templates.wizardStep4),
+	className: 'user-feedback-wizard-step-4',
+	template: template(user_feedback.templates.wizardStep4),
 
-  render: function () {
-    this.$el.html(this.template);
-    this.delegateEvents();
+	render: function () {
+		this.$el.html(this.template);
+		this.delegateEvents();
 
-    this.fillInTheData();
+		this.fillInTheData();
 
-    return this;
-  },
+		return this;
+	},
 
-  fillInTheData: function () {
-    var email = ( this.model.get('userEmail') !== '' ) ? this.model.get('userEmail') : user_feedback.user.email;
-    var name = ( this.model.get('userName') !== '' ) ? this.model.get('userName') : user_feedback.user.name;
-    this.$el.find('#user-feedback-overview-user img').attr('src', 'https://secure.gravatar.com/avatar/' + md5(email) + '?d=monsterid&s=90');
-    this.$el.find('#user-feedback-overview-user div').append(name);
-    this.$el.find('#user-feedback-overview-note').val(this.model.get('userMessage'));
+	fillInTheData: function () {
+		var email = ( this.model.get('userEmail') !== '' ) ? this.model.get('userEmail') : user_feedback.user.email;
+		var name = ( this.model.get('userName') !== '' ) ? this.model.get('userName') : user_feedback.user.name;
 
-    this.$el.find('#user-feedback-additional-theme').append(user_feedback.theme.name);
-    this.$el.find('#user-feedback-additional-browser').append(navigator.saysWho);
-    this.$el.find('#user-feedback-additional-template').append(user_feedback.theme.current_template);
-    this.$el.find('#user-feedback-additional-language').append(user_feedback.language);
+		var $userContainer = this.$el.find('#user-feedback-overview-user');
 
-    var screenshot = ( this.model.get('userScreenshot') ) ? this.model.get('userScreenshot') : '';
-    this.$el.find('#user-feedback-overview-screenshot-img').attr('src', screenshot);
-  },
+		// Get avatar
+		jQuery.get(user_feedback.ajax_url + '?action=user_feedback_avatar&email=' + email, function (data) {
+			$userContainer.prepend(data);
+		});
 
-  nextStep: function () {
-    this.model.set('userMessage', this.$el.find('#user-feedback-overview-note').val());
-    this.trigger('sendData');
-  }
+		this.$el.find('#user-feedback-overview-user div').append(name);
+		this.$el.find('#user-feedback-overview-note').val(this.model.get('userMessage'));
+
+		this.$el.find('#user-feedback-additional-theme').append(user_feedback.theme.name);
+		this.$el.find('#user-feedback-additional-browser').append(navigator.saysWho);
+		this.$el.find('#user-feedback-additional-template').append(user_feedback.theme.current_template);
+		this.$el.find('#user-feedback-additional-language').append(user_feedback.language);
+
+		var screenshot = ( this.model.get('userScreenshot') ) ? this.model.get('userScreenshot') : '';
+		this.$el.find('#user-feedback-overview-screenshot-img').attr('src', screenshot);
+	},
+
+	nextStep: function () {
+		this.model.set('userMessage', this.$el.find('#user-feedback-overview-note').val());
+		this.trigger('sendData');
+	}
 });
 
 module.exports = WizardStep4;
 
-},{"21":21,"23":23,"8":8}],20:[function(require,module,exports){
+},{"21":21,"8":8}],20:[function(require,module,exports){
 'use strict';
 
 var WizardStep = require(21);
 var template = require(9);
 
 var WizardStep5 = WizardStep.extend({
-  className: 'user-feedback-wizard-step-5',
-  template : template(user_feedback.templates.wizardStep5)
+	className: 'user-feedback-wizard-step-5',
+	template: template(user_feedback.templates.wizardStep5)
 });
 
 module.exports = WizardStep5;
+
 },{"21":21,"9":9}],21:[function(require,module,exports){
 'use strict';
 
 var WizardStep = Backbone.View.extend({
-  render: function () {
-    this.$el.html(this.template);
-    this.delegateEvents();
+	render: function () {
+		this.$el.html(this.template);
+		this.delegateEvents();
 
-    return this;
-  },
+		return this;
+	},
 
-  nextStep: function () {
-  }
+	nextStep: function () {
+	}
 });
 
 module.exports = WizardStep;
+
 },{}],22:[function(require,module,exports){
 'use strict';
 
@@ -815,2104 +825,144 @@ var WizardStep5 = require(20);
 var userFeedbackModel = require(1);
 
 var UserFeedbackWizard = Backbone.View.extend({
-  className: 'user-feedback-wizard-view',
-  template : _.template('<div class="user-feedback-modal__container"></div>'),
+	className: 'user-feedback-wizard-view',
+	template: _.template('<div class="user-feedback-modal__container"></div>'),
 
-  steps: [
-    {
-      view: new WizardStep1({model: userFeedbackModel})
-    },
-    {
-      view: new WizardStep2({model: userFeedbackModel})
-    },
-    {
-      view: new WizardStep3({model: userFeedbackModel})
-    },
-    {
-      view: new WizardStep4({model: userFeedbackModel})
-    },
-    {
-      view: new WizardStep5({model: userFeedbackModel})
-    }
-  ],
+	steps: [
+		{
+			view: new WizardStep1({model: userFeedbackModel})
+		},
+		{
+			view: new WizardStep2({model: userFeedbackModel})
+		},
+		{
+			view: new WizardStep3({model: userFeedbackModel})
+		},
+		{
+			view: new WizardStep4({model: userFeedbackModel})
+		},
+		{
+			view: new WizardStep5({model: userFeedbackModel})
+		}
+	],
 
-  initialize: function () {
-    _.bindAll(this, 'render');
-    this.initialStep = 0;
+	initialize: function () {
+		_.bindAll(this, 'render');
+		this.initialStep = 0;
 
-    _.each(this.steps, function (step) {
-      this.listenTo(step.view, 'nextStep', this.goToNextStep);
-      this.listenTo(step.view, 'sendData', function () {
-        this.trigger('sendData');
-      });
-    }, this);
+		_.each(this.steps, function (step) {
+			this.listenTo(step.view, 'nextStep', this.goToNextStep);
+			this.listenTo(step.view, 'sendData', function () {
+				this.trigger('sendData');
+			});
+		}, this);
 
-    // A logged in user doesn't need to provide his name
-    if (user_feedback.user.logged_in) {
-      this.initialStep++;
-      this.model.set('userName', user_feedback.user.name);
-      this.model.set('userEmail', user_feedback.user.email);
-    }
+		// A logged in user doesn't need to provide his name
+		if (user_feedback.user.logged_in) {
+			this.initialStep++;
+			this.model.set('userName', user_feedback.user.name);
+			this.model.set('userEmail', user_feedback.user.email);
+		}
 
-    // If the cookie is set, let's go straight to the next step
-    if (this.initialStep === 1 && document.cookie.indexOf('user_feedback_do_not_show_again') >= 0) {
-      this.initialStep++;
-    }
+		// If the cookie is set, let's go straight to the next step
+		if (this.initialStep === 1 && document.cookie.indexOf('user_feedback_do_not_show_again') >= 0) {
+			this.initialStep++;
+		}
 
-    this.model.set('currentWizardStep', this.initialStep);
-  },
+		this.model.set('currentWizardStep', this.initialStep);
+	},
 
-  render: function () {
-    var wizardStep = this.model.get('currentWizardStep');
-    // If the cookie is set, let's go straight to the next step
-    if (wizardStep <= 1 && document.cookie.indexOf('user_feedback_do_not_show_again') >= 0) {
-      wizardStep = 2;
-    }
-    var currentStep = this.steps[wizardStep];
-    this.currentView = currentStep.view;
+	render: function () {
+		var wizardStep = this.model.get('currentWizardStep');
+		// If the cookie is set, let's go straight to the next step
+		if (wizardStep <= 1 && document.cookie.indexOf('user_feedback_do_not_show_again') >= 0) {
+			wizardStep = 2;
+		}
+		var currentStep = this.steps[wizardStep];
+		this.currentView = currentStep.view;
 
-    this.$el.html(this.currentView.render().el).focus();
+		this.$el.html(this.currentView.render().el).focus();
 
-    return this;
-  },
+		return this;
+	},
 
-  events: {
-    'click .user-feedback-button-previous': 'previousStep',
-    'click .user-feedback-button-next'    : 'nextStep',
-    'click .user-feedback-button-close'   : 'closeWizard',
-    'click .user-feedback-button-done'    : 'closeWizard',
-    'click .user-feedback-button-restart' : 'restartWizard'
-  },
+	events: {
+		'click .user-feedback-button-previous': 'previousStep',
+		'click .user-feedback-button-next': 'nextStep',
+		'click .user-feedback-button-close': 'closeWizard',
+		'click .user-feedback-button-done': 'closeWizard',
+		'click .user-feedback-button-restart': 'restartWizard'
+	},
 
-  previousStep: function (e) {
-    e.preventDefault();
-    this.goToPreviousStep();
-  },
+	previousStep: function (e) {
+		e.preventDefault();
+		this.goToPreviousStep();
+	},
 
-  nextStep: function (e) {
-    e.preventDefault();
-    this.goToNextStep();
-  },
+	nextStep: function (e) {
+		e.preventDefault();
+		this.goToNextStep();
+	},
 
-  closeWizard: function (e) {
-    e.preventDefault();
-    this.model.set('currentWizardStep', this.initialStep);
-    this.trigger('reInitialize');
-  },
+	closeWizard: function (e) {
+		e.preventDefault();
+		this.model.set('currentWizardStep', this.initialStep);
+		this.trigger('reInitialize');
+	},
 
-  restartWizard: function (e) {
-    e.preventDefault();
-    this.model.set('currentWizardStep', 2);
-    this.trigger('toggleBottomBar');
-    this.trigger('changeStep', 2);
-    this.render();
-  },
+	restartWizard: function (e) {
+		e.preventDefault();
+		this.model.set('currentWizardStep', 2);
+		this.trigger('toggleBottomBar');
+		this.trigger('changeStep', 2);
+		this.render();
+	},
 
-  goToNextStep: function () {
-    if (!this.isLastStep()) {
-      var step = this.model.get('currentWizardStep') + 1;
-      this.currentView.nextStep();
+	goToNextStep: function () {
+		if (!this.isLastStep()) {
+			var step = this.model.get('currentWizardStep') + 1;
+			this.currentView.nextStep();
 
-      // If the cookie is set, let's go straight to the next step
-      if (step === 1 && document.cookie.indexOf('user_feedback_do_not_show_again') >= 0) {
-        step++;
-      }
+			// If the cookie is set, let's go straight to the next step
+			if (step === 1 && document.cookie.indexOf('user_feedback_do_not_show_again') >= 0) {
+				step++;
+			}
 
-      this.model.set('currentWizardStep', step);
+			this.model.set('currentWizardStep', step);
 
-      // todo: make more flexible
-      if (this.model.get('currentWizardStep') === 4) {
-        this.trigger('toggleBottomBar');
-      }
+			// todo: make more flexible
+			if (this.model.get('currentWizardStep') === 4) {
+				this.trigger('toggleBottomBar');
+			}
 
-      this.render();
-    }
-  },
+			this.render();
+		}
+	},
 
-  goToPreviousStep: function () {
-    if (!this.isFirstStep()) {
-      if (this.model.get('currentWizardStep') === 4) {
-        this.trigger('toggleBottomBar');
-      }
+	goToPreviousStep: function () {
+		if (!this.isFirstStep()) {
+			if (this.model.get('currentWizardStep') === 4) {
+				this.trigger('toggleBottomBar');
+			}
 
-      this.model.set('currentWizardStep', this.model.get('currentWizardStep') - 1);
-      this.render();
-    }
-  },
+			this.model.set('currentWizardStep', this.model.get('currentWizardStep') - 1);
+			this.render();
+		}
+	},
 
-  isFirstStep: function () {
-    return (this.model.get('currentWizardStep') === 0);
-  },
+	isFirstStep: function () {
+		return (this.model.get('currentWizardStep') === 0);
+	},
 
-  isLastStep: function () {
-    return (this.model.get('currentWizardStep') === this.steps.length - 1);
-  }
+	isLastStep: function () {
+		return (this.model.get('currentWizardStep') === this.steps.length - 1);
+	}
 
 });
 
 module.exports = UserFeedbackWizard;
 
 },{"1":1,"16":16,"17":17,"18":18,"19":19,"20":20}],23:[function(require,module,exports){
-(function (Buffer){
-(function(){
-  var crypt = require(25),
-      utf8 = require(24).utf8,
-      bin = require(24).bin,
-
-  // The core
-  md5 = function (message, options) {
-    // Convert to byte array
-    if (message.constructor == String)
-      if (options && options.encoding === 'binary')
-        message = bin.stringToBytes(message);
-      else
-        message = utf8.stringToBytes(message);
-    else if (typeof Buffer != 'undefined' &&
-        typeof Buffer.isBuffer == 'function' && Buffer.isBuffer(message))
-      message = Array.prototype.slice.call(message, 0);
-    else if (!Array.isArray(message))
-      message = message.toString();
-    // else, assume byte array already
-
-    var m = crypt.bytesToWords(message),
-        l = message.length * 8,
-        a =  1732584193,
-        b = -271733879,
-        c = -1732584194,
-        d =  271733878;
-
-    // Swap endian
-    for (var i = 0; i < m.length; i++) {
-      m[i] = ((m[i] <<  8) | (m[i] >>> 24)) & 0x00FF00FF |
-             ((m[i] << 24) | (m[i] >>>  8)) & 0xFF00FF00;
-    }
-
-    // Padding
-    m[l >>> 5] |= 0x80 << (l % 32);
-    m[(((l + 64) >>> 9) << 4) + 14] = l;
-
-    // Method shortcuts
-    var FF = md5._ff,
-        GG = md5._gg,
-        HH = md5._hh,
-        II = md5._ii;
-
-    for (var i = 0; i < m.length; i += 16) {
-
-      var aa = a,
-          bb = b,
-          cc = c,
-          dd = d;
-
-      a = FF(a, b, c, d, m[i+ 0],  7, -680876936);
-      d = FF(d, a, b, c, m[i+ 1], 12, -389564586);
-      c = FF(c, d, a, b, m[i+ 2], 17,  606105819);
-      b = FF(b, c, d, a, m[i+ 3], 22, -1044525330);
-      a = FF(a, b, c, d, m[i+ 4],  7, -176418897);
-      d = FF(d, a, b, c, m[i+ 5], 12,  1200080426);
-      c = FF(c, d, a, b, m[i+ 6], 17, -1473231341);
-      b = FF(b, c, d, a, m[i+ 7], 22, -45705983);
-      a = FF(a, b, c, d, m[i+ 8],  7,  1770035416);
-      d = FF(d, a, b, c, m[i+ 9], 12, -1958414417);
-      c = FF(c, d, a, b, m[i+10], 17, -42063);
-      b = FF(b, c, d, a, m[i+11], 22, -1990404162);
-      a = FF(a, b, c, d, m[i+12],  7,  1804603682);
-      d = FF(d, a, b, c, m[i+13], 12, -40341101);
-      c = FF(c, d, a, b, m[i+14], 17, -1502002290);
-      b = FF(b, c, d, a, m[i+15], 22,  1236535329);
-
-      a = GG(a, b, c, d, m[i+ 1],  5, -165796510);
-      d = GG(d, a, b, c, m[i+ 6],  9, -1069501632);
-      c = GG(c, d, a, b, m[i+11], 14,  643717713);
-      b = GG(b, c, d, a, m[i+ 0], 20, -373897302);
-      a = GG(a, b, c, d, m[i+ 5],  5, -701558691);
-      d = GG(d, a, b, c, m[i+10],  9,  38016083);
-      c = GG(c, d, a, b, m[i+15], 14, -660478335);
-      b = GG(b, c, d, a, m[i+ 4], 20, -405537848);
-      a = GG(a, b, c, d, m[i+ 9],  5,  568446438);
-      d = GG(d, a, b, c, m[i+14],  9, -1019803690);
-      c = GG(c, d, a, b, m[i+ 3], 14, -187363961);
-      b = GG(b, c, d, a, m[i+ 8], 20,  1163531501);
-      a = GG(a, b, c, d, m[i+13],  5, -1444681467);
-      d = GG(d, a, b, c, m[i+ 2],  9, -51403784);
-      c = GG(c, d, a, b, m[i+ 7], 14,  1735328473);
-      b = GG(b, c, d, a, m[i+12], 20, -1926607734);
-
-      a = HH(a, b, c, d, m[i+ 5],  4, -378558);
-      d = HH(d, a, b, c, m[i+ 8], 11, -2022574463);
-      c = HH(c, d, a, b, m[i+11], 16,  1839030562);
-      b = HH(b, c, d, a, m[i+14], 23, -35309556);
-      a = HH(a, b, c, d, m[i+ 1],  4, -1530992060);
-      d = HH(d, a, b, c, m[i+ 4], 11,  1272893353);
-      c = HH(c, d, a, b, m[i+ 7], 16, -155497632);
-      b = HH(b, c, d, a, m[i+10], 23, -1094730640);
-      a = HH(a, b, c, d, m[i+13],  4,  681279174);
-      d = HH(d, a, b, c, m[i+ 0], 11, -358537222);
-      c = HH(c, d, a, b, m[i+ 3], 16, -722521979);
-      b = HH(b, c, d, a, m[i+ 6], 23,  76029189);
-      a = HH(a, b, c, d, m[i+ 9],  4, -640364487);
-      d = HH(d, a, b, c, m[i+12], 11, -421815835);
-      c = HH(c, d, a, b, m[i+15], 16,  530742520);
-      b = HH(b, c, d, a, m[i+ 2], 23, -995338651);
-
-      a = II(a, b, c, d, m[i+ 0],  6, -198630844);
-      d = II(d, a, b, c, m[i+ 7], 10,  1126891415);
-      c = II(c, d, a, b, m[i+14], 15, -1416354905);
-      b = II(b, c, d, a, m[i+ 5], 21, -57434055);
-      a = II(a, b, c, d, m[i+12],  6,  1700485571);
-      d = II(d, a, b, c, m[i+ 3], 10, -1894986606);
-      c = II(c, d, a, b, m[i+10], 15, -1051523);
-      b = II(b, c, d, a, m[i+ 1], 21, -2054922799);
-      a = II(a, b, c, d, m[i+ 8],  6,  1873313359);
-      d = II(d, a, b, c, m[i+15], 10, -30611744);
-      c = II(c, d, a, b, m[i+ 6], 15, -1560198380);
-      b = II(b, c, d, a, m[i+13], 21,  1309151649);
-      a = II(a, b, c, d, m[i+ 4],  6, -145523070);
-      d = II(d, a, b, c, m[i+11], 10, -1120210379);
-      c = II(c, d, a, b, m[i+ 2], 15,  718787259);
-      b = II(b, c, d, a, m[i+ 9], 21, -343485551);
-
-      a = (a + aa) >>> 0;
-      b = (b + bb) >>> 0;
-      c = (c + cc) >>> 0;
-      d = (d + dd) >>> 0;
-    }
-
-    return crypt.endian([a, b, c, d]);
-  };
-
-  // Auxiliary functions
-  md5._ff  = function (a, b, c, d, x, s, t) {
-    var n = a + (b & c | ~b & d) + (x >>> 0) + t;
-    return ((n << s) | (n >>> (32 - s))) + b;
-  };
-  md5._gg  = function (a, b, c, d, x, s, t) {
-    var n = a + (b & d | c & ~d) + (x >>> 0) + t;
-    return ((n << s) | (n >>> (32 - s))) + b;
-  };
-  md5._hh  = function (a, b, c, d, x, s, t) {
-    var n = a + (b ^ c ^ d) + (x >>> 0) + t;
-    return ((n << s) | (n >>> (32 - s))) + b;
-  };
-  md5._ii  = function (a, b, c, d, x, s, t) {
-    var n = a + (c ^ (b | ~d)) + (x >>> 0) + t;
-    return ((n << s) | (n >>> (32 - s))) + b;
-  };
-
-  // Package private blocksize
-  md5._blocksize = 16;
-  md5._digestsize = 16;
-
-  module.exports = function (message, options) {
-    if(typeof message == 'undefined')
-      return;
-
-    var digestbytes = crypt.wordsToBytes(md5(message, options));
-    return options && options.asBytes ? digestbytes :
-        options && options.asString ? bin.bytesToString(digestbytes) :
-        crypt.bytesToHex(digestbytes);
-  };
-
-})();
-
-}).call(this,require(26).Buffer)
-},{"24":24,"25":25,"26":26}],24:[function(require,module,exports){
-var charenc = {
-  // UTF-8 encoding
-  utf8: {
-    // Convert a string to a byte array
-    stringToBytes: function(str) {
-      return charenc.bin.stringToBytes(unescape(encodeURIComponent(str)));
-    },
-
-    // Convert a byte array to a string
-    bytesToString: function(bytes) {
-      return decodeURIComponent(escape(charenc.bin.bytesToString(bytes)));
-    }
-  },
-
-  // Binary encoding
-  bin: {
-    // Convert a string to a byte array
-    stringToBytes: function(str) {
-      for (var bytes = [], i = 0; i < str.length; i++)
-        bytes.push(str.charCodeAt(i) & 0xFF);
-      return bytes;
-    },
-
-    // Convert a byte array to a string
-    bytesToString: function(bytes) {
-      for (var str = [], i = 0; i < bytes.length; i++)
-        str.push(String.fromCharCode(bytes[i]));
-      return str.join('');
-    }
-  }
-};
-
-module.exports = charenc;
-
-},{}],25:[function(require,module,exports){
-(function() {
-  var base64map
-      = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
-
-  crypt = {
-    // Bit-wise rotation left
-    rotl: function(n, b) {
-      return (n << b) | (n >>> (32 - b));
-    },
-
-    // Bit-wise rotation right
-    rotr: function(n, b) {
-      return (n << (32 - b)) | (n >>> b);
-    },
-
-    // Swap big-endian to little-endian and vice versa
-    endian: function(n) {
-      // If number given, swap endian
-      if (n.constructor == Number) {
-        return crypt.rotl(n, 8) & 0x00FF00FF | crypt.rotl(n, 24) & 0xFF00FF00;
-      }
-
-      // Else, assume array and swap all items
-      for (var i = 0; i < n.length; i++)
-        n[i] = crypt.endian(n[i]);
-      return n;
-    },
-
-    // Generate an array of any length of random bytes
-    randomBytes: function(n) {
-      for (var bytes = []; n > 0; n--)
-        bytes.push(Math.floor(Math.random() * 256));
-      return bytes;
-    },
-
-    // Convert a byte array to big-endian 32-bit words
-    bytesToWords: function(bytes) {
-      for (var words = [], i = 0, b = 0; i < bytes.length; i++, b += 8)
-        words[b >>> 5] |= bytes[i] << (24 - b % 32);
-      return words;
-    },
-
-    // Convert big-endian 32-bit words to a byte array
-    wordsToBytes: function(words) {
-      for (var bytes = [], b = 0; b < words.length * 32; b += 8)
-        bytes.push((words[b >>> 5] >>> (24 - b % 32)) & 0xFF);
-      return bytes;
-    },
-
-    // Convert a byte array to a hex string
-    bytesToHex: function(bytes) {
-      for (var hex = [], i = 0; i < bytes.length; i++) {
-        hex.push((bytes[i] >>> 4).toString(16));
-        hex.push((bytes[i] & 0xF).toString(16));
-      }
-      return hex.join('');
-    },
-
-    // Convert a hex string to a byte array
-    hexToBytes: function(hex) {
-      for (var bytes = [], c = 0; c < hex.length; c += 2)
-        bytes.push(parseInt(hex.substr(c, 2), 16));
-      return bytes;
-    },
-
-    // Convert a byte array to a base-64 string
-    bytesToBase64: function(bytes) {
-      for (var base64 = [], i = 0; i < bytes.length; i += 3) {
-        var triplet = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
-        for (var j = 0; j < 4; j++)
-          if (i * 8 + j * 6 <= bytes.length * 8)
-            base64.push(base64map.charAt((triplet >>> 6 * (3 - j)) & 0x3F));
-          else
-            base64.push('=');
-      }
-      return base64.join('');
-    },
-
-    // Convert a base-64 string to a byte array
-    base64ToBytes: function(base64) {
-      // Remove non-base-64 characters
-      base64 = base64.replace(/[^A-Z0-9+\/]/ig, '');
-
-      for (var bytes = [], i = 0, imod4 = 0; i < base64.length;
-          imod4 = ++i % 4) {
-        if (imod4 == 0) continue;
-        bytes.push(((base64map.indexOf(base64.charAt(i - 1))
-            & (Math.pow(2, -2 * imod4 + 8) - 1)) << (imod4 * 2))
-            | (base64map.indexOf(base64.charAt(i)) >>> (6 - imod4 * 2)));
-      }
-      return bytes;
-    }
-  };
-
-  module.exports = crypt;
-})();
-
-},{}],26:[function(require,module,exports){
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-
-var base64 = require(27)
-var ieee754 = require(28)
-var isArray = require(29)
-
-exports.Buffer = Buffer
-exports.SlowBuffer = SlowBuffer
-exports.INSPECT_MAX_BYTES = 50
-Buffer.poolSize = 8192 // not used by this implementation
-
-var kMaxLength = 0x3fffffff
-var rootParent = {}
-
-/**
- * If `Buffer.TYPED_ARRAY_SUPPORT`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (most compatible, even IE6)
- *
- * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
- * Opera 11.6+, iOS 4.2+.
- *
- * Note:
- *
- * - Implementation must support adding new properties to `Uint8Array` instances.
- *   Firefox 4-29 lacked support, fixed in Firefox 30+.
- *   See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
- *
- *  - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
- *
- *  - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
- *    incorrect length in some situations.
- *
- * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they will
- * get the Object implementation, which is slower but will work correctly.
- */
-Buffer.TYPED_ARRAY_SUPPORT = (function () {
-  try {
-    var buf = new ArrayBuffer(0)
-    var arr = new Uint8Array(buf)
-    arr.foo = function () { return 42 }
-    return arr.foo() === 42 && // typed array instances can be augmented
-        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
-        new Uint8Array(1).subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
-  } catch (e) {
-    return false
-  }
-})()
-
-/**
- * Class: Buffer
- * =============
- *
- * The Buffer constructor returns instances of `Uint8Array` that are augmented
- * with function properties for all the node `Buffer` API functions. We use
- * `Uint8Array` so that square bracket notation works as expected -- it returns
- * a single octet.
- *
- * By augmenting the instances, we can avoid modifying the `Uint8Array`
- * prototype.
- */
-function Buffer (arg) {
-  if (!(this instanceof Buffer)) {
-    // Avoid going through an ArgumentsAdaptorTrampoline in the common case.
-    if (arguments.length > 1) return new Buffer(arg, arguments[1])
-    return new Buffer(arg)
-  }
-
-  this.length = 0
-  this.parent = undefined
-
-  // Common case.
-  if (typeof arg === 'number') {
-    return fromNumber(this, arg)
-  }
-
-  // Slightly less common case.
-  if (typeof arg === 'string') {
-    return fromString(this, arg, arguments.length > 1 ? arguments[1] : 'utf8')
-  }
-
-  // Unusual.
-  return fromObject(this, arg)
-}
-
-function fromNumber (that, length) {
-  that = allocate(that, length < 0 ? 0 : checked(length) | 0)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < length; i++) {
-      that[i] = 0
-    }
-  }
-  return that
-}
-
-function fromString (that, string, encoding) {
-  if (typeof encoding !== 'string' || encoding === '') encoding = 'utf8'
-
-  // Assumption: byteLength() return value is always < kMaxLength.
-  var length = byteLength(string, encoding) | 0
-  that = allocate(that, length)
-
-  that.write(string, encoding)
-  return that
-}
-
-function fromObject (that, object) {
-  if (Buffer.isBuffer(object)) return fromBuffer(that, object)
-
-  if (isArray(object)) return fromArray(that, object)
-
-  if (object == null) {
-    throw new TypeError('must start with number, buffer, array or string')
-  }
-
-  if (typeof ArrayBuffer !== 'undefined' && object.buffer instanceof ArrayBuffer) {
-    return fromTypedArray(that, object)
-  }
-
-  if (object.length) return fromArrayLike(that, object)
-
-  return fromJsonObject(that, object)
-}
-
-function fromBuffer (that, buffer) {
-  var length = checked(buffer.length) | 0
-  that = allocate(that, length)
-  buffer.copy(that, 0, 0, length)
-  return that
-}
-
-function fromArray (that, array) {
-  var length = checked(array.length) | 0
-  that = allocate(that, length)
-  for (var i = 0; i < length; i += 1) {
-    that[i] = array[i] & 255
-  }
-  return that
-}
-
-// Duplicate of fromArray() to keep fromArray() monomorphic.
-function fromTypedArray (that, array) {
-  var length = checked(array.length) | 0
-  that = allocate(that, length)
-  // Truncating the elements is probably not what people expect from typed
-  // arrays with BYTES_PER_ELEMENT > 1 but it's compatible with the behavior
-  // of the old Buffer constructor.
-  for (var i = 0; i < length; i += 1) {
-    that[i] = array[i] & 255
-  }
-  return that
-}
-
-function fromArrayLike (that, array) {
-  var length = checked(array.length) | 0
-  that = allocate(that, length)
-  for (var i = 0; i < length; i += 1) {
-    that[i] = array[i] & 255
-  }
-  return that
-}
-
-// Deserialize { type: 'Buffer', data: [1,2,3,...] } into a Buffer object.
-// Returns a zero-length buffer for inputs that don't conform to the spec.
-function fromJsonObject (that, object) {
-  var array
-  var length = 0
-
-  if (object.type === 'Buffer' && isArray(object.data)) {
-    array = object.data
-    length = checked(array.length) | 0
-  }
-  that = allocate(that, length)
-
-  for (var i = 0; i < length; i += 1) {
-    that[i] = array[i] & 255
-  }
-  return that
-}
-
-function allocate (that, length) {
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = Buffer._augment(new Uint8Array(length))
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    that.length = length
-    that._isBuffer = true
-  }
-
-  var fromPool = length !== 0 && length <= Buffer.poolSize >>> 1
-  if (fromPool) that.parent = rootParent
-
-  return that
-}
-
-function checked (length) {
-  // Note: cannot use `length < kMaxLength` here because that fails when
-  // length is NaN (which is otherwise coerced to zero.)
-  if (length >= kMaxLength) {
-    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-                         'size: 0x' + kMaxLength.toString(16) + ' bytes')
-  }
-  return length | 0
-}
-
-function SlowBuffer (subject, encoding) {
-  if (!(this instanceof SlowBuffer)) return new SlowBuffer(subject, encoding)
-
-  var buf = new Buffer(subject, encoding)
-  delete buf.parent
-  return buf
-}
-
-Buffer.isBuffer = function isBuffer (b) {
-  return !!(b != null && b._isBuffer)
-}
-
-Buffer.compare = function compare (a, b) {
-  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
-    throw new TypeError('Arguments must be Buffers')
-  }
-
-  if (a === b) return 0
-
-  var x = a.length
-  var y = b.length
-
-  var i = 0
-  var len = Math.min(x, y)
-  while (i < len) {
-    if (a[i] !== b[i]) break
-
-    ++i
-  }
-
-  if (i !== len) {
-    x = a[i]
-    y = b[i]
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-}
-
-Buffer.isEncoding = function isEncoding (encoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'binary':
-    case 'base64':
-    case 'raw':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-}
-
-Buffer.concat = function concat (list, length) {
-  if (!isArray(list)) throw new TypeError('list argument must be an Array of Buffers.')
-
-  if (list.length === 0) {
-    return new Buffer(0)
-  } else if (list.length === 1) {
-    return list[0]
-  }
-
-  var i
-  if (length === undefined) {
-    length = 0
-    for (i = 0; i < list.length; i++) {
-      length += list[i].length
-    }
-  }
-
-  var buf = new Buffer(length)
-  var pos = 0
-  for (i = 0; i < list.length; i++) {
-    var item = list[i]
-    item.copy(buf, pos)
-    pos += item.length
-  }
-  return buf
-}
-
-function byteLength (string, encoding) {
-  if (typeof string !== 'string') string = String(string)
-
-  if (string.length === 0) return 0
-
-  switch (encoding || 'utf8') {
-    case 'ascii':
-    case 'binary':
-    case 'raw':
-      return string.length
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return string.length * 2
-    case 'hex':
-      return string.length >>> 1
-    case 'utf8':
-    case 'utf-8':
-      return utf8ToBytes(string).length
-    case 'base64':
-      return base64ToBytes(string).length
-    default:
-      return string.length
-  }
-}
-Buffer.byteLength = byteLength
-
-// pre-set for values that may exist in the future
-Buffer.prototype.length = undefined
-Buffer.prototype.parent = undefined
-
-// toString(encoding, start=0, end=buffer.length)
-Buffer.prototype.toString = function toString (encoding, start, end) {
-  var loweredCase = false
-
-  start = start | 0
-  end = end === undefined || end === Infinity ? this.length : end | 0
-
-  if (!encoding) encoding = 'utf8'
-  if (start < 0) start = 0
-  if (end > this.length) end = this.length
-  if (end <= start) return ''
-
-  while (true) {
-    switch (encoding) {
-      case 'hex':
-        return hexSlice(this, start, end)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Slice(this, start, end)
-
-      case 'ascii':
-        return asciiSlice(this, start, end)
-
-      case 'binary':
-        return binarySlice(this, start, end)
-
-      case 'base64':
-        return base64Slice(this, start, end)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return utf16leSlice(this, start, end)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = (encoding + '').toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-
-Buffer.prototype.equals = function equals (b) {
-  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
-  if (this === b) return true
-  return Buffer.compare(this, b) === 0
-}
-
-Buffer.prototype.inspect = function inspect () {
-  var str = ''
-  var max = exports.INSPECT_MAX_BYTES
-  if (this.length > 0) {
-    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
-    if (this.length > max) str += ' ... '
-  }
-  return '<Buffer ' + str + '>'
-}
-
-Buffer.prototype.compare = function compare (b) {
-  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
-  if (this === b) return 0
-  return Buffer.compare(this, b)
-}
-
-Buffer.prototype.indexOf = function indexOf (val, byteOffset) {
-  if (byteOffset > 0x7fffffff) byteOffset = 0x7fffffff
-  else if (byteOffset < -0x80000000) byteOffset = -0x80000000
-  byteOffset >>= 0
-
-  if (this.length === 0) return -1
-  if (byteOffset >= this.length) return -1
-
-  // Negative offsets start from the end of the buffer
-  if (byteOffset < 0) byteOffset = Math.max(this.length + byteOffset, 0)
-
-  if (typeof val === 'string') {
-    if (val.length === 0) return -1 // special case: looking for empty string always fails
-    return String.prototype.indexOf.call(this, val, byteOffset)
-  }
-  if (Buffer.isBuffer(val)) {
-    return arrayIndexOf(this, val, byteOffset)
-  }
-  if (typeof val === 'number') {
-    if (Buffer.TYPED_ARRAY_SUPPORT && Uint8Array.prototype.indexOf === 'function') {
-      return Uint8Array.prototype.indexOf.call(this, val, byteOffset)
-    }
-    return arrayIndexOf(this, [ val ], byteOffset)
-  }
-
-  function arrayIndexOf (arr, val, byteOffset) {
-    var foundIndex = -1
-    for (var i = 0; byteOffset + i < arr.length; i++) {
-      if (arr[byteOffset + i] === val[foundIndex === -1 ? 0 : i - foundIndex]) {
-        if (foundIndex === -1) foundIndex = i
-        if (i - foundIndex + 1 === val.length) return byteOffset + foundIndex
-      } else {
-        foundIndex = -1
-      }
-    }
-    return -1
-  }
-
-  throw new TypeError('val must be string, number or Buffer')
-}
-
-// `get` will be removed in Node 0.13+
-Buffer.prototype.get = function get (offset) {
-  console.log('.get() is deprecated. Access using array indexes instead.')
-  return this.readUInt8(offset)
-}
-
-// `set` will be removed in Node 0.13+
-Buffer.prototype.set = function set (v, offset) {
-  console.log('.set() is deprecated. Access using array indexes instead.')
-  return this.writeUInt8(v, offset)
-}
-
-function hexWrite (buf, string, offset, length) {
-  offset = Number(offset) || 0
-  var remaining = buf.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length
-  if (strLen % 2 !== 0) throw new Error('Invalid hex string')
-
-  if (length > strLen / 2) {
-    length = strLen / 2
-  }
-  for (var i = 0; i < length; i++) {
-    var parsed = parseInt(string.substr(i * 2, 2), 16)
-    if (isNaN(parsed)) throw new Error('Invalid hex string')
-    buf[offset + i] = parsed
-  }
-  return i
-}
-
-function utf8Write (buf, string, offset, length) {
-  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-function asciiWrite (buf, string, offset, length) {
-  return blitBuffer(asciiToBytes(string), buf, offset, length)
-}
-
-function binaryWrite (buf, string, offset, length) {
-  return asciiWrite(buf, string, offset, length)
-}
-
-function base64Write (buf, string, offset, length) {
-  return blitBuffer(base64ToBytes(string), buf, offset, length)
-}
-
-function ucs2Write (buf, string, offset, length) {
-  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-Buffer.prototype.write = function write (string, offset, length, encoding) {
-  // Buffer#write(string)
-  if (offset === undefined) {
-    encoding = 'utf8'
-    length = this.length
-    offset = 0
-  // Buffer#write(string, encoding)
-  } else if (length === undefined && typeof offset === 'string') {
-    encoding = offset
-    length = this.length
-    offset = 0
-  // Buffer#write(string, offset[, length][, encoding])
-  } else if (isFinite(offset)) {
-    offset = offset | 0
-    if (isFinite(length)) {
-      length = length | 0
-      if (encoding === undefined) encoding = 'utf8'
-    } else {
-      encoding = length
-      length = undefined
-    }
-  // legacy write(string, encoding, offset, length) - remove in v0.13
-  } else {
-    var swap = encoding
-    encoding = offset
-    offset = length | 0
-    length = swap
-  }
-
-  var remaining = this.length - offset
-  if (length === undefined || length > remaining) length = remaining
-
-  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
-    throw new RangeError('attempt to write outside buffer bounds')
-  }
-
-  if (!encoding) encoding = 'utf8'
-
-  var loweredCase = false
-  for (;;) {
-    switch (encoding) {
-      case 'hex':
-        return hexWrite(this, string, offset, length)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Write(this, string, offset, length)
-
-      case 'ascii':
-        return asciiWrite(this, string, offset, length)
-
-      case 'binary':
-        return binaryWrite(this, string, offset, length)
-
-      case 'base64':
-        // Warning: maxLength not taken into account in base64Write
-        return base64Write(this, string, offset, length)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return ucs2Write(this, string, offset, length)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = ('' + encoding).toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-
-Buffer.prototype.toJSON = function toJSON () {
-  return {
-    type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-function base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return base64.fromByteArray(buf)
-  } else {
-    return base64.fromByteArray(buf.slice(start, end))
-  }
-}
-
-function utf8Slice (buf, start, end) {
-  var res = ''
-  var tmp = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++) {
-    if (buf[i] <= 0x7F) {
-      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
-      tmp = ''
-    } else {
-      tmp += '%' + buf[i].toString(16)
-    }
-  }
-
-  return res + decodeUtf8Char(tmp)
-}
-
-function asciiSlice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++) {
-    ret += String.fromCharCode(buf[i] & 0x7F)
-  }
-  return ret
-}
-
-function binarySlice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++) {
-    ret += String.fromCharCode(buf[i])
-  }
-  return ret
-}
-
-function hexSlice (buf, start, end) {
-  var len = buf.length
-
-  if (!start || start < 0) start = 0
-  if (!end || end < 0 || end > len) end = len
-
-  var out = ''
-  for (var i = start; i < end; i++) {
-    out += toHex(buf[i])
-  }
-  return out
-}
-
-function utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  var res = ''
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
-  }
-  return res
-}
-
-Buffer.prototype.slice = function slice (start, end) {
-  var len = this.length
-  start = ~~start
-  end = end === undefined ? len : ~~end
-
-  if (start < 0) {
-    start += len
-    if (start < 0) start = 0
-  } else if (start > len) {
-    start = len
-  }
-
-  if (end < 0) {
-    end += len
-    if (end < 0) end = 0
-  } else if (end > len) {
-    end = len
-  }
-
-  if (end < start) end = start
-
-  var newBuf
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    newBuf = Buffer._augment(this.subarray(start, end))
-  } else {
-    var sliceLen = end - start
-    newBuf = new Buffer(sliceLen, undefined)
-    for (var i = 0; i < sliceLen; i++) {
-      newBuf[i] = this[i + start]
-    }
-  }
-
-  if (newBuf.length) newBuf.parent = this.parent || this
-
-  return newBuf
-}
-
-/*
- * Need to make sure that buffer isn't trying to write out of bounds.
- */
-function checkOffset (offset, ext, length) {
-  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
-  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
-}
-
-Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var val = this[offset]
-  var mul = 1
-  var i = 0
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul
-  }
-
-  return val
-}
-
-Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    checkOffset(offset, byteLength, this.length)
-  }
-
-  var val = this[offset + --byteLength]
-  var mul = 1
-  while (byteLength > 0 && (mul *= 0x100)) {
-    val += this[offset + --byteLength] * mul
-  }
-
-  return val
-}
-
-Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length)
-  return this[offset]
-}
-
-Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  return this[offset] | (this[offset + 1] << 8)
-}
-
-Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  return (this[offset] << 8) | this[offset + 1]
-}
-
-Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return ((this[offset]) |
-      (this[offset + 1] << 8) |
-      (this[offset + 2] << 16)) +
-      (this[offset + 3] * 0x1000000)
-}
-
-Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset] * 0x1000000) +
-    ((this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    this[offset + 3])
-}
-
-Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var val = this[offset]
-  var mul = 1
-  var i = 0
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul
-  }
-  mul *= 0x80
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-  return val
-}
-
-Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var i = byteLength
-  var mul = 1
-  var val = this[offset + --i]
-  while (i > 0 && (mul *= 0x100)) {
-    val += this[offset + --i] * mul
-  }
-  mul *= 0x80
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-  return val
-}
-
-Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length)
-  if (!(this[offset] & 0x80)) return (this[offset])
-  return ((0xff - this[offset] + 1) * -1)
-}
-
-Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  var val = this[offset] | (this[offset + 1] << 8)
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-}
-
-Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  var val = this[offset + 1] | (this[offset] << 8)
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-}
-
-Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset]) |
-    (this[offset + 1] << 8) |
-    (this[offset + 2] << 16) |
-    (this[offset + 3] << 24)
-}
-
-Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset] << 24) |
-    (this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    (this[offset + 3])
-}
-
-Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-  return ieee754.read(this, offset, true, 23, 4)
-}
-
-Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-  return ieee754.read(this, offset, false, 23, 4)
-}
-
-Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length)
-  return ieee754.read(this, offset, true, 52, 8)
-}
-
-Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length)
-  return ieee754.read(this, offset, false, 52, 8)
-}
-
-function checkInt (buf, value, offset, ext, max, min) {
-  if (!Buffer.isBuffer(buf)) throw new TypeError('buffer must be a Buffer instance')
-  if (value > max || value < min) throw new RangeError('value is out of bounds')
-  if (offset + ext > buf.length) throw new RangeError('index out of range')
-}
-
-Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
-
-  var mul = 1
-  var i = 0
-  this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
-
-  var i = byteLength - 1
-  var mul = 1
-  this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-  this[offset] = value
-  return offset + 1
-}
-
-function objectWriteUInt16 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffff + value + 1
-  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; i++) {
-    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-      (littleEndian ? i : 1 - i) * 8
-  }
-}
-
-Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = value
-    this[offset + 1] = (value >>> 8)
-  } else {
-    objectWriteUInt16(this, value, offset, true)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8)
-    this[offset + 1] = value
-  } else {
-    objectWriteUInt16(this, value, offset, false)
-  }
-  return offset + 2
-}
-
-function objectWriteUInt32 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffffffff + value + 1
-  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; i++) {
-    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset + 3] = (value >>> 24)
-    this[offset + 2] = (value >>> 16)
-    this[offset + 1] = (value >>> 8)
-    this[offset] = value
-  } else {
-    objectWriteUInt32(this, value, offset, true)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24)
-    this[offset + 1] = (value >>> 16)
-    this[offset + 2] = (value >>> 8)
-    this[offset + 3] = value
-  } else {
-    objectWriteUInt32(this, value, offset, false)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1)
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-  }
-
-  var i = 0
-  var mul = 1
-  var sub = value < 0 ? 1 : 0
-  this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100)) {
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1)
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-  }
-
-  var i = byteLength - 1
-  var mul = 1
-  var sub = value < 0 ? 1 : 0
-  this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100)) {
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-  if (value < 0) value = 0xff + value + 1
-  this[offset] = value
-  return offset + 1
-}
-
-Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = value
-    this[offset + 1] = (value >>> 8)
-  } else {
-    objectWriteUInt16(this, value, offset, true)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8)
-    this[offset + 1] = value
-  } else {
-    objectWriteUInt16(this, value, offset, false)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = value
-    this[offset + 1] = (value >>> 8)
-    this[offset + 2] = (value >>> 16)
-    this[offset + 3] = (value >>> 24)
-  } else {
-    objectWriteUInt32(this, value, offset, true)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-  if (value < 0) value = 0xffffffff + value + 1
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24)
-    this[offset + 1] = (value >>> 16)
-    this[offset + 2] = (value >>> 8)
-    this[offset + 3] = value
-  } else {
-    objectWriteUInt32(this, value, offset, false)
-  }
-  return offset + 4
-}
-
-function checkIEEE754 (buf, value, offset, ext, max, min) {
-  if (value > max || value < min) throw new RangeError('value is out of bounds')
-  if (offset + ext > buf.length) throw new RangeError('index out of range')
-  if (offset < 0) throw new RangeError('index out of range')
-}
-
-function writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-  ieee754.write(buf, value, offset, littleEndian, 23, 4)
-  return offset + 4
-}
-
-Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, false, noAssert)
-}
-
-function writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-  ieee754.write(buf, value, offset, littleEndian, 52, 8)
-  return offset + 8
-}
-
-Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, false, noAssert)
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function copy (target, targetStart, start, end) {
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (targetStart >= target.length) targetStart = target.length
-  if (!targetStart) targetStart = 0
-  if (end > 0 && end < start) end = start
-
-  // Copy 0 bytes; we're done
-  if (end === start) return 0
-  if (target.length === 0 || this.length === 0) return 0
-
-  // Fatal error conditions
-  if (targetStart < 0) {
-    throw new RangeError('targetStart out of bounds')
-  }
-  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
-  if (end < 0) throw new RangeError('sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length) end = this.length
-  if (target.length - targetStart < end - start) {
-    end = target.length - targetStart + start
-  }
-
-  var len = end - start
-
-  if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < len; i++) {
-      target[i + targetStart] = this[i + start]
-    }
-  } else {
-    target._set(this.subarray(start, start + len), targetStart)
-  }
-
-  return len
-}
-
-// fill(value, start=0, end=buffer.length)
-Buffer.prototype.fill = function fill (value, start, end) {
-  if (!value) value = 0
-  if (!start) start = 0
-  if (!end) end = this.length
-
-  if (end < start) throw new RangeError('end < start')
-
-  // Fill 0 bytes; we're done
-  if (end === start) return
-  if (this.length === 0) return
-
-  if (start < 0 || start >= this.length) throw new RangeError('start out of bounds')
-  if (end < 0 || end > this.length) throw new RangeError('end out of bounds')
-
-  var i
-  if (typeof value === 'number') {
-    for (i = start; i < end; i++) {
-      this[i] = value
-    }
-  } else {
-    var bytes = utf8ToBytes(value.toString())
-    var len = bytes.length
-    for (i = start; i < end; i++) {
-      this[i] = bytes[i % len]
-    }
-  }
-
-  return this
-}
-
-/**
- * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
- * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
- */
-Buffer.prototype.toArrayBuffer = function toArrayBuffer () {
-  if (typeof Uint8Array !== 'undefined') {
-    if (Buffer.TYPED_ARRAY_SUPPORT) {
-      return (new Buffer(this)).buffer
-    } else {
-      var buf = new Uint8Array(this.length)
-      for (var i = 0, len = buf.length; i < len; i += 1) {
-        buf[i] = this[i]
-      }
-      return buf.buffer
-    }
-  } else {
-    throw new TypeError('Buffer.toArrayBuffer not supported in this browser')
-  }
-}
-
-// HELPER FUNCTIONS
-// ================
-
-var BP = Buffer.prototype
-
-/**
- * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
- */
-Buffer._augment = function _augment (arr) {
-  arr.constructor = Buffer
-  arr._isBuffer = true
-
-  // save reference to original Uint8Array set method before overwriting
-  arr._set = arr.set
-
-  // deprecated, will be removed in node 0.13+
-  arr.get = BP.get
-  arr.set = BP.set
-
-  arr.write = BP.write
-  arr.toString = BP.toString
-  arr.toLocaleString = BP.toString
-  arr.toJSON = BP.toJSON
-  arr.equals = BP.equals
-  arr.compare = BP.compare
-  arr.indexOf = BP.indexOf
-  arr.copy = BP.copy
-  arr.slice = BP.slice
-  arr.readUIntLE = BP.readUIntLE
-  arr.readUIntBE = BP.readUIntBE
-  arr.readUInt8 = BP.readUInt8
-  arr.readUInt16LE = BP.readUInt16LE
-  arr.readUInt16BE = BP.readUInt16BE
-  arr.readUInt32LE = BP.readUInt32LE
-  arr.readUInt32BE = BP.readUInt32BE
-  arr.readIntLE = BP.readIntLE
-  arr.readIntBE = BP.readIntBE
-  arr.readInt8 = BP.readInt8
-  arr.readInt16LE = BP.readInt16LE
-  arr.readInt16BE = BP.readInt16BE
-  arr.readInt32LE = BP.readInt32LE
-  arr.readInt32BE = BP.readInt32BE
-  arr.readFloatLE = BP.readFloatLE
-  arr.readFloatBE = BP.readFloatBE
-  arr.readDoubleLE = BP.readDoubleLE
-  arr.readDoubleBE = BP.readDoubleBE
-  arr.writeUInt8 = BP.writeUInt8
-  arr.writeUIntLE = BP.writeUIntLE
-  arr.writeUIntBE = BP.writeUIntBE
-  arr.writeUInt16LE = BP.writeUInt16LE
-  arr.writeUInt16BE = BP.writeUInt16BE
-  arr.writeUInt32LE = BP.writeUInt32LE
-  arr.writeUInt32BE = BP.writeUInt32BE
-  arr.writeIntLE = BP.writeIntLE
-  arr.writeIntBE = BP.writeIntBE
-  arr.writeInt8 = BP.writeInt8
-  arr.writeInt16LE = BP.writeInt16LE
-  arr.writeInt16BE = BP.writeInt16BE
-  arr.writeInt32LE = BP.writeInt32LE
-  arr.writeInt32BE = BP.writeInt32BE
-  arr.writeFloatLE = BP.writeFloatLE
-  arr.writeFloatBE = BP.writeFloatBE
-  arr.writeDoubleLE = BP.writeDoubleLE
-  arr.writeDoubleBE = BP.writeDoubleBE
-  arr.fill = BP.fill
-  arr.inspect = BP.inspect
-  arr.toArrayBuffer = BP.toArrayBuffer
-
-  return arr
-}
-
-var INVALID_BASE64_RE = /[^+\/0-9A-z\-]/g
-
-function base64clean (str) {
-  // Node strips out invalid characters like \n and \t from the string, base64-js does not
-  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
-  // Node converts strings with length < 2 to ''
-  if (str.length < 2) return ''
-  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
-  while (str.length % 4 !== 0) {
-    str = str + '='
-  }
-  return str
-}
-
-function stringtrim (str) {
-  if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
-}
-
-function utf8ToBytes (string, units) {
-  units = units || Infinity
-  var codePoint
-  var length = string.length
-  var leadSurrogate = null
-  var bytes = []
-  var i = 0
-
-  for (; i < length; i++) {
-    codePoint = string.charCodeAt(i)
-
-    // is surrogate component
-    if (codePoint > 0xD7FF && codePoint < 0xE000) {
-      // last char was a lead
-      if (leadSurrogate) {
-        // 2 leads in a row
-        if (codePoint < 0xDC00) {
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          leadSurrogate = codePoint
-          continue
-        } else {
-          // valid surrogate pair
-          codePoint = leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00 | 0x10000
-          leadSurrogate = null
-        }
-      } else {
-        // no lead yet
-
-        if (codePoint > 0xDBFF) {
-          // unexpected trail
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          continue
-        } else if (i + 1 === length) {
-          // unpaired lead
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          continue
-        } else {
-          // valid lead
-          leadSurrogate = codePoint
-          continue
-        }
-      }
-    } else if (leadSurrogate) {
-      // valid bmp char, but last char was a lead
-      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-      leadSurrogate = null
-    }
-
-    // encode utf8
-    if (codePoint < 0x80) {
-      if ((units -= 1) < 0) break
-      bytes.push(codePoint)
-    } else if (codePoint < 0x800) {
-      if ((units -= 2) < 0) break
-      bytes.push(
-        codePoint >> 0x6 | 0xC0,
-        codePoint & 0x3F | 0x80
-      )
-    } else if (codePoint < 0x10000) {
-      if ((units -= 3) < 0) break
-      bytes.push(
-        codePoint >> 0xC | 0xE0,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      )
-    } else if (codePoint < 0x200000) {
-      if ((units -= 4) < 0) break
-      bytes.push(
-        codePoint >> 0x12 | 0xF0,
-        codePoint >> 0xC & 0x3F | 0x80,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      )
-    } else {
-      throw new Error('Invalid code point')
-    }
-  }
-
-  return bytes
-}
-
-function asciiToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push(str.charCodeAt(i) & 0xFF)
-  }
-  return byteArray
-}
-
-function utf16leToBytes (str, units) {
-  var c, hi, lo
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    if ((units -= 2) < 0) break
-
-    c = str.charCodeAt(i)
-    hi = c >> 8
-    lo = c % 256
-    byteArray.push(lo)
-    byteArray.push(hi)
-  }
-
-  return byteArray
-}
-
-function base64ToBytes (str) {
-  return base64.toByteArray(base64clean(str))
-}
-
-function blitBuffer (src, dst, offset, length) {
-  for (var i = 0; i < length; i++) {
-    if ((i + offset >= dst.length) || (i >= src.length)) break
-    dst[i + offset] = src[i]
-  }
-  return i
-}
-
-function decodeUtf8Char (str) {
-  try {
-    return decodeURIComponent(str)
-  } catch (err) {
-    return String.fromCharCode(0xFFFD) // UTF 8 invalid char
-  }
-}
-
-},{"27":27,"28":28,"29":29}],27:[function(require,module,exports){
-var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-;(function (exports) {
-	'use strict';
-
-  var Arr = (typeof Uint8Array !== 'undefined')
-    ? Uint8Array
-    : Array
-
-	var PLUS   = '+'.charCodeAt(0)
-	var SLASH  = '/'.charCodeAt(0)
-	var NUMBER = '0'.charCodeAt(0)
-	var LOWER  = 'a'.charCodeAt(0)
-	var UPPER  = 'A'.charCodeAt(0)
-	var PLUS_URL_SAFE = '-'.charCodeAt(0)
-	var SLASH_URL_SAFE = '_'.charCodeAt(0)
-
-	function decode (elt) {
-		var code = elt.charCodeAt(0)
-		if (code === PLUS ||
-		    code === PLUS_URL_SAFE)
-			return 62 // '+'
-		if (code === SLASH ||
-		    code === SLASH_URL_SAFE)
-			return 63 // '/'
-		if (code < NUMBER)
-			return -1 //no match
-		if (code < NUMBER + 10)
-			return code - NUMBER + 26 + 26
-		if (code < UPPER + 26)
-			return code - UPPER
-		if (code < LOWER + 26)
-			return code - LOWER + 26
-	}
-
-	function b64ToByteArray (b64) {
-		var i, j, l, tmp, placeHolders, arr
-
-		if (b64.length % 4 > 0) {
-			throw new Error('Invalid string. Length must be a multiple of 4')
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		var len = b64.length
-		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = new Arr(b64.length * 3 / 4 - placeHolders)
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length
-
-		var L = 0
-
-		function push (v) {
-			arr[L++] = v
-		}
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-			push((tmp & 0xFF0000) >> 16)
-			push((tmp & 0xFF00) >> 8)
-			push(tmp & 0xFF)
-		}
-
-		if (placeHolders === 2) {
-			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-			push(tmp & 0xFF)
-		} else if (placeHolders === 1) {
-			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-			push((tmp >> 8) & 0xFF)
-			push(tmp & 0xFF)
-		}
-
-		return arr
-	}
-
-	function uint8ToBase64 (uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length
-
-		function encode (num) {
-			return lookup.charAt(num)
-		}
-
-		function tripletToBase64 (num) {
-			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-		}
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-			output += tripletToBase64(temp)
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1]
-				output += encode(temp >> 2)
-				output += encode((temp << 4) & 0x3F)
-				output += '=='
-				break
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-				output += encode(temp >> 10)
-				output += encode((temp >> 4) & 0x3F)
-				output += encode((temp << 2) & 0x3F)
-				output += '='
-				break
-		}
-
-		return output
-	}
-
-	exports.toByteArray = b64ToByteArray
-	exports.fromByteArray = uint8ToBase64
-}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
-
-},{}],28:[function(require,module,exports){
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-},{}],29:[function(require,module,exports){
-
-/**
- * isArray
- */
-
-var isArray = Array.isArray;
-
-/**
- * toString
- */
-
-var str = Object.prototype.toString;
-
-/**
- * Whether or not the given `val`
- * is an array.
- *
- * example:
- *
- *        isArray([]);
- *        // > true
- *        isArray(arguments);
- *        // > false
- *        isArray('');
- *        // > false
- *
- * @param {mixed} val
- * @return {bool}
- */
-
-module.exports = isArray || function (val) {
-  return !! val && '[object Array]' == str.call(val);
-};
-
-},{}],30:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3004,7 +1054,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],31:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.3.2 by @mathias */
 ;(function(root) {
@@ -3538,7 +1588,7 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],32:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -4513,10 +2563,10 @@ process.umask = function() { return 0; };
 }).call(this);
 
 
-}).call(this,require(30),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"30":30}],33:[function(require,module,exports){
-var log = require(44);
-var Promise = require(47);
+}).call(this,require(23),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"23":23}],26:[function(require,module,exports){
+var log = require(37);
+var Promise = require(40);
 
 var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
 var html2canvasCanvasCloneIndex = 0;
@@ -4641,7 +2691,7 @@ module.exports = function(ownerDocument, containerDocument, width, height, optio
     });
 };
 
-},{"44":44,"47":47}],34:[function(require,module,exports){
+},{"37":37,"40":40}],27:[function(require,module,exports){
 // http://dev.w3.org/csswg/css-color/
 
 function Color(value) {
@@ -4914,17 +2964,17 @@ var colors = {
 
 module.exports = Color;
 
-},{}],35:[function(require,module,exports){
-var Promise = require(47);
-var Support = require(54);
-var CanvasRenderer = require(52);
-var ImageLoader = require(42);
-var NodeParser = require(46);
-var NodeContainer = require(45);
-var log = require(44);
-var utils = require(58);
-var createWindowClone = require(33);
-var loadUrlDocument = require(48).loadUrlDocument;
+},{}],28:[function(require,module,exports){
+var Promise = require(40);
+var Support = require(47);
+var CanvasRenderer = require(45);
+var ImageLoader = require(35);
+var NodeParser = require(39);
+var NodeContainer = require(38);
+var log = require(37);
+var utils = require(51);
+var createWindowClone = require(26);
+var loadUrlDocument = require(41).loadUrlDocument;
 var getBounds = utils.getBounds;
 
 var html2canvasNodeAttribute = "data-html2canvas-node";
@@ -5063,10 +3113,10 @@ function absoluteUrl(url) {
     return link;
 }
 
-},{"33":33,"42":42,"44":44,"45":45,"46":46,"47":47,"48":48,"52":52,"54":54,"58":58}],36:[function(require,module,exports){
-var Promise = require(47);
-var log = require(44);
-var smallImage = require(58).smallImage;
+},{"26":26,"35":35,"37":37,"38":38,"39":39,"40":40,"41":41,"45":45,"47":47,"51":51}],29:[function(require,module,exports){
+var Promise = require(40);
+var log = require(37);
+var smallImage = require(51).smallImage;
 
 function DummyImageContainer(src) {
     this.src = src;
@@ -5088,8 +3138,8 @@ function DummyImageContainer(src) {
 
 module.exports = DummyImageContainer;
 
-},{"44":44,"47":47,"58":58}],37:[function(require,module,exports){
-var smallImage = require(58).smallImage;
+},{"37":37,"40":40,"51":51}],30:[function(require,module,exports){
+var smallImage = require(51).smallImage;
 
 function Font(family, size) {
     var container = document.createElement('div'),
@@ -5142,8 +3192,8 @@ function Font(family, size) {
 
 module.exports = Font;
 
-},{"58":58}],38:[function(require,module,exports){
-var Font = require(37);
+},{"51":51}],31:[function(require,module,exports){
+var Font = require(30);
 
 function FontMetrics() {
     this.data = {};
@@ -5158,11 +3208,11 @@ FontMetrics.prototype.getMetrics = function(family, size) {
 
 module.exports = FontMetrics;
 
-},{"37":37}],39:[function(require,module,exports){
-var utils = require(58);
-var Promise = require(47);
+},{"30":30}],32:[function(require,module,exports){
+var utils = require(51);
+var Promise = require(40);
 var getBounds = utils.getBounds;
-var loadUrlDocument = require(48).loadUrlDocument;
+var loadUrlDocument = require(41).loadUrlDocument;
 
 function FrameContainer(container, sameOrigin, options) {
     this.image = null;
@@ -5178,7 +3228,7 @@ function FrameContainer(container, sameOrigin, options) {
             resolve(container);
         }
     })).then(function(container) {
-        var html2canvas = require(35);
+        var html2canvas = require(28);
         return html2canvas(container.contentWindow.document.documentElement, {type: 'view', width: container.width, height: container.height, proxy: options.proxy, javascriptEnabled: options.javascriptEnabled, removeContainer: options.removeContainer, allowTaint: options.allowTaint, imageTimeout: options.imageTimeout / 2});
     }).then(function(canvas) {
         return self.image = canvas;
@@ -5192,8 +3242,8 @@ FrameContainer.prototype.proxyLoad = function(proxy, bounds, options) {
 
 module.exports = FrameContainer;
 
-},{"35":35,"47":47,"48":48,"58":58}],40:[function(require,module,exports){
-var Promise = require(47);
+},{"28":28,"40":40,"41":41,"51":51}],33:[function(require,module,exports){
+var Promise = require(40);
 
 function GradientContainer(imageData) {
     this.src = imageData.value;
@@ -5213,8 +3263,8 @@ GradientContainer.prototype.TYPES = {
 
 module.exports = GradientContainer;
 
-},{"47":47}],41:[function(require,module,exports){
-var Promise = require(47);
+},{"40":40}],34:[function(require,module,exports){
+var Promise = require(40);
 
 function ImageContainer(src, cors) {
     this.src = src;
@@ -5236,18 +3286,18 @@ function ImageContainer(src, cors) {
 
 module.exports = ImageContainer;
 
-},{"47":47}],42:[function(require,module,exports){
-var Promise = require(47);
-var log = require(44);
-var ImageContainer = require(41);
-var DummyImageContainer = require(36);
-var ProxyImageContainer = require(49);
-var FrameContainer = require(39);
-var SVGContainer = require(55);
-var SVGNodeContainer = require(56);
-var LinearGradientContainer = require(43);
-var WebkitGradientContainer = require(59);
-var bind = require(58).bind;
+},{"40":40}],35:[function(require,module,exports){
+var Promise = require(40);
+var log = require(37);
+var ImageContainer = require(34);
+var DummyImageContainer = require(29);
+var ProxyImageContainer = require(42);
+var FrameContainer = require(32);
+var SVGContainer = require(48);
+var SVGNodeContainer = require(49);
+var LinearGradientContainer = require(36);
+var WebkitGradientContainer = require(52);
+var bind = require(51).bind;
 
 function ImageLoader(options, support) {
     this.link = null;
@@ -5396,9 +3446,9 @@ ImageLoader.prototype.timeout = function(container, timeout) {
 
 module.exports = ImageLoader;
 
-},{"36":36,"39":39,"41":41,"43":43,"44":44,"47":47,"49":49,"55":55,"56":56,"58":58,"59":59}],43:[function(require,module,exports){
-var GradientContainer = require(40);
-var Color = require(34);
+},{"29":29,"32":32,"34":34,"36":36,"37":37,"40":40,"42":42,"48":48,"49":49,"51":51,"52":52}],36:[function(require,module,exports){
+var GradientContainer = require(33);
+var Color = require(27);
 
 function LinearGradientContainer(imageData) {
     GradientContainer.apply(this, arguments);
@@ -5476,16 +3526,16 @@ LinearGradientContainer.prototype.stepRegExp = /((?:rgb|rgba)\(\d{1,3},\s\d{1,3}
 
 module.exports = LinearGradientContainer;
 
-},{"34":34,"40":40}],44:[function(require,module,exports){
+},{"27":27,"33":33}],37:[function(require,module,exports){
 module.exports = function() {
     if (window.html2canvas.logging && window.console && window.console.log) {
         Function.prototype.bind.call(window.console.log, (window.console)).apply(window.console, [(Date.now() - window.html2canvas.start) + "ms", "html2canvas:"].concat([].slice.call(arguments, 0)));
     }
 };
 
-},{}],45:[function(require,module,exports){
-var Color = require(34);
-var utils = require(58);
+},{}],38:[function(require,module,exports){
+var Color = require(27);
+var utils = require(51);
 var getBounds = utils.getBounds;
 var parseBackgrounds = utils.parseBackgrounds;
 var offsetBounds = utils.offsetBounds;
@@ -5776,17 +3826,17 @@ function asFloat(str) {
 
 module.exports = NodeContainer;
 
-},{"34":34,"58":58}],46:[function(require,module,exports){
-var log = require(44);
-var punycode = require(31);
-var NodeContainer = require(45);
-var TextContainer = require(57);
-var PseudoElementContainer = require(50);
-var FontMetrics = require(38);
-var Color = require(34);
-var Promise = require(47);
-var StackingContext = require(53);
-var utils = require(58);
+},{"27":27,"51":51}],39:[function(require,module,exports){
+var log = require(37);
+var punycode = require(24);
+var NodeContainer = require(38);
+var TextContainer = require(50);
+var PseudoElementContainer = require(43);
+var FontMetrics = require(31);
+var Color = require(27);
+var Promise = require(40);
+var StackingContext = require(46);
+var utils = require(51);
 var bind = utils.bind;
 var getBounds = utils.getBounds;
 var parseBackgrounds = utils.parseBackgrounds;
@@ -6648,15 +4698,15 @@ function hasUnicode(string) {
 
 module.exports = NodeParser;
 
-},{"31":31,"34":34,"38":38,"44":44,"45":45,"47":47,"50":50,"53":53,"57":57,"58":58}],47:[function(require,module,exports){
-module.exports = require(32).Promise;
+},{"24":24,"27":27,"31":31,"37":37,"38":38,"40":40,"43":43,"46":46,"50":50,"51":51}],40:[function(require,module,exports){
+module.exports = require(25).Promise;
 
-},{"32":32}],48:[function(require,module,exports){
-var Promise = require(47);
-var XHR = require(60);
-var utils = require(58);
-var log = require(44);
-var createWindowClone = require(33);
+},{"25":25}],41:[function(require,module,exports){
+var Promise = require(40);
+var XHR = require(53);
+var utils = require(51);
+var log = require(37);
+var createWindowClone = require(26);
 var decode64 = utils.decode64;
 
 function Proxy(src, proxyUrl, document) {
@@ -6749,9 +4799,9 @@ exports.Proxy = Proxy;
 exports.ProxyURL = ProxyURL;
 exports.loadUrlDocument = loadUrlDocument;
 
-},{"33":33,"44":44,"47":47,"58":58,"60":60}],49:[function(require,module,exports){
-var ProxyURL = require(48).ProxyURL;
-var Promise = require(47);
+},{"26":26,"37":37,"40":40,"51":51,"53":53}],42:[function(require,module,exports){
+var ProxyURL = require(41).ProxyURL;
+var Promise = require(40);
 
 function ProxyImageContainer(src, proxy) {
     var link = document.createElement("a");
@@ -6773,8 +4823,8 @@ function ProxyImageContainer(src, proxy) {
 
 module.exports = ProxyImageContainer;
 
-},{"47":47,"48":48}],50:[function(require,module,exports){
-var NodeContainer = require(45);
+},{"40":40,"41":41}],43:[function(require,module,exports){
+var NodeContainer = require(38);
 
 function PseudoElementContainer(node, parent, type) {
     NodeContainer.call(this, node, parent);
@@ -6813,8 +4863,8 @@ PseudoElementContainer.prototype.PSEUDO_HIDE_ELEMENT_CLASS_AFTER = "___html2canv
 
 module.exports = PseudoElementContainer;
 
-},{"45":45}],51:[function(require,module,exports){
-var log = require(44);
+},{"38":38}],44:[function(require,module,exports){
+var log = require(37);
 
 function Renderer(width, height, images, options, document) {
     this.width = width;
@@ -6923,10 +4973,10 @@ Renderer.prototype.renderBackgroundRepeating = function(container, bounds, image
 
 module.exports = Renderer;
 
-},{"44":44}],52:[function(require,module,exports){
-var Renderer = require(51);
-var LinearGradientContainer = require(43);
-var log = require(44);
+},{"37":37}],45:[function(require,module,exports){
+var Renderer = require(44);
+var LinearGradientContainer = require(36);
+var log = require(37);
 
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
@@ -7106,8 +5156,8 @@ function hasEntries(array) {
 
 module.exports = CanvasRenderer;
 
-},{"43":43,"44":44,"51":51}],53:[function(require,module,exports){
-var NodeContainer = require(45);
+},{"36":36,"37":37,"44":44}],46:[function(require,module,exports){
+var NodeContainer = require(38);
 
 function StackingContext(hasOwnStacking, opacity, element, parent) {
     NodeContainer.call(this, element, parent);
@@ -7126,7 +5176,7 @@ StackingContext.prototype.getParentStack = function(context) {
 
 module.exports = StackingContext;
 
-},{"45":45}],54:[function(require,module,exports){
+},{"38":38}],47:[function(require,module,exports){
 function Support(document) {
     this.rangeBounds = this.testRangeBounds(document);
     this.cors = this.testCORS();
@@ -7179,10 +5229,10 @@ Support.prototype.testSVG = function() {
 
 module.exports = Support;
 
-},{}],55:[function(require,module,exports){
-var Promise = require(47);
-var XHR = require(60);
-var decode64 = require(58).decode64;
+},{}],48:[function(require,module,exports){
+var Promise = require(40);
+var XHR = require(53);
+var decode64 = require(51).decode64;
 
 function SVGContainer(src) {
     this.src = src;
@@ -7234,9 +5284,9 @@ SVGContainer.prototype.decode64 = function(str) {
 
 module.exports = SVGContainer;
 
-},{"47":47,"58":58,"60":60}],56:[function(require,module,exports){
-var SVGContainer = require(55);
-var Promise = require(47);
+},{"40":40,"51":51,"53":53}],49:[function(require,module,exports){
+var SVGContainer = require(48);
+var Promise = require(40);
 
 function SVGNodeContainer(node, _native) {
     this.src = node;
@@ -7262,8 +5312,8 @@ SVGNodeContainer.prototype = Object.create(SVGContainer.prototype);
 
 module.exports = SVGNodeContainer;
 
-},{"47":47,"55":55}],57:[function(require,module,exports){
-var NodeContainer = require(45);
+},{"40":40,"48":48}],50:[function(require,module,exports){
+var NodeContainer = require(38);
 
 function TextContainer(node, parent) {
     NodeContainer.call(this, node, parent);
@@ -7297,7 +5347,7 @@ function capitalize(m, p1, p2) {
 
 module.exports = TextContainer;
 
-},{"45":45}],58:[function(require,module,exports){
+},{"38":38}],51:[function(require,module,exports){
 exports.smallImage = function smallImage() {
     return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 };
@@ -7468,8 +5518,8 @@ exports.parseBackgrounds = function(backgroundImage) {
     return results;
 };
 
-},{}],59:[function(require,module,exports){
-var GradientContainer = require(40);
+},{}],52:[function(require,module,exports){
+var GradientContainer = require(33);
 
 function WebkitGradientContainer(imageData) {
     GradientContainer.apply(this, arguments);
@@ -7480,8 +5530,8 @@ WebkitGradientContainer.prototype = Object.create(GradientContainer.prototype);
 
 module.exports = WebkitGradientContainer;
 
-},{"40":40}],60:[function(require,module,exports){
-var Promise = require(47);
+},{"33":33}],53:[function(require,module,exports){
+var Promise = require(40);
 
 function XHR(url) {
     return new Promise(function(resolve, reject) {
@@ -7506,4 +5556,4 @@ function XHR(url) {
 
 module.exports = XHR;
 
-},{"47":47}]},{},[10]);
+},{"40":40}]},{},[10]);
